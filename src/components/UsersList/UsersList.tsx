@@ -70,7 +70,7 @@ const UsersList: React.FC = () => {
               <th
                 key={key}
                 onClick={() => handleSort(key)}
-                className="p-2 text-left cursor-pointer hover:bg-white dark:hover:bg-white-700"
+                className="p-2 text-left cursor-pointer hover:bg-white dark:hover:bg-gray-700"
                 aria-sort={
                   sortBy === key
                     ? sortOrder === 'asc'
@@ -91,7 +91,7 @@ const UsersList: React.FC = () => {
               key={user.id}
               onClick={() => handleUserClick(user.id)}
               className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-white-700 ${
-                selectedUserId === user.id ? 'bg-gray-200 dark:bg-white-600' : ''
+                selectedUserId === user.id ? 'bg-white-200 dark:bg-white-600' : ''
               }`}
               role="button"
               tabIndex={0}

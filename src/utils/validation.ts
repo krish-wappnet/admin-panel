@@ -26,3 +26,15 @@ export const validatePassword = (password: string): string[] => {
 export const checkEmailUniqueness = (email: string, users: User[]): boolean => {
   return !users.some((user) => user.email.toLowerCase() === email.toLowerCase());
 };
+
+export const validateEmail = (email: string): string[] => {
+  const errors: string[] = [];
+
+  if (!email) {
+    errors.push('Email is required');
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.push('Email format is invalid');
+  }
+
+  return errors;
+};

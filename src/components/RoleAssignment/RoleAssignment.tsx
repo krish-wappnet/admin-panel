@@ -139,7 +139,7 @@ const RoleAssignment: React.FC = () => {
               })
             )
           }
-          className="p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+          className="p-2 border rounded dark:bg-white-700 dark:border-white-600"
           aria-label="Select role"
         >
           <option value="" disabled>

@@ -4,12 +4,12 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   updateAddUserField,
   setAddUserPermissions,
-  validateAddUserForm,
   resetAddUserForm,
 } from '../../redux/slices/formSlice';
 import { addUser } from '../../redux/slices/usersSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { addLog } from '../../redux/slices/auditLogSlice';
+import { validateEmail, checkEmailUniqueness, validatePassword } from '../../utils/validation';
 
 interface AddUserModalProps {
   isOpen: boolean;
@@ -22,8 +22,20 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose }) => {
   const { users } = useAppSelector((state) => state.users);
 
   const handleSubmit = () => {
-    dispatch(validateAddUserForm(users));
-    if (form.errors.length === 0) {
+    const emailErrors = validateEmail(form.email);
+    const emailUniquenessErrors =
+      emailErrors.length === 0 && !checkEmailUniqueness(form.email, users)
+        ? ['Email already exists']
+        : [];
+  
+    const passwordErrors = validatePassword(form.password);
+  
+    const permissionErrors =
+      form.role === 'Custom' && form.errors.length > 0 ? ['Invalid permissions'] : [];
+  
+    const allErrors = [...emailErrors, ...emailUniquenessErrors, ...passwordErrors, ...permissionErrors];
+  
+    if (allErrors.length === 0) {
       const newUser = {
         id: uuidv4(),
         name: form.name,
@@ -43,6 +55,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose }) => {
       );
       dispatch(resetAddUserForm());
       onClose();
+    } else {
+      dispatch(updateAddUserField({ errors: allErrors }));
     }
   };
 
@@ -50,39 +64,59 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded shadow max-w-lg w-full">
+      <div className="bg-white dark:bg-white-800 p-6 rounded shadow max-w-lg w-full">
         <h2 className="text-xl font-bold mb-4">Add New User</h2>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <label className="block mb-1">Name</label>
           <input
             type="text"
             value={form.name}
             onChange={(e) => dispatch(updateAddUserField({ name: e.target.value }))}
-            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+            className={`w-full p-2 border rounded dark:bg-white-700 dark:border-white-600 ${
+              form.errors.find((err: string | string[]) => err.includes('Name')) ? 'border-red-500' : ''
+            }`}
             aria-label="User name"
           />
+          {form.errors.find((err: string | string[]) => err.includes('Name')) && (
+            <p className="absolute text-red-500 text-sm mt-1">Name is required</p>
+          )}
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <label className="block mb-1">Email</label>
           <input
             type="email"
             value={form.email}
             onChange={(e) => dispatch(updateAddUserField({ email: e.target.value }))}
-            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+            className={`w-full p-2 border rounded dark:bg-white-700 dark:border-white-600 ${
+              form.errors.find((err: string | string[]) => err.includes('Email')) ? 'border-red-500' : ''
+            }`}
             aria-label="User email"
           />
+          {form.errors.find((err: string | string[]) => err.includes('Email')) && (
+            <p className="absolute text-red-500 text-sm mt-1">Invalid email format</p>
+          )}
+          {form.errors.find((err: string | string[]) => err.includes('Email already exists')) && (
+            <p className="absolute text-red-500 text-sm mt-1">Email already exists</p>
+          )}
         </div>
-        <div className="mb-4">
-          <label className="block mb-1">Password</label>
+        <div className="mb-4 relative">
+          <label className="block mb-1 mt-5">Password</label>
           <input
             type="password"
             value={form.password}
             onChange={(e) => dispatch(updateAddUserField({ password: e.target.value }))}
-            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+            className={`w-full p-2 border rounded dark:bg-white-700 dark:border-white-600 ${
+              form.errors.find((err: string | string[]) => err.includes('Password')) ? 'border-red-500' : ''
+            }`}
             aria-label="User password"
           />
+          <div className="mt-1">
+            {form.errors.filter((err: string | string[]) => err.includes('Password')).map((err: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined, index: React.Key | null | undefined) => (
+              <p key={index} className="text-red-500 text-sm">{err}</p>
+            ))}
+          </div>
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <label className="block mb-1">Role</label>
           <select
             value={form.role}
@@ -93,7 +127,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose }) => {
                 })
               )
             }
-            className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+            className={`w-full p-2 border rounded dark:bg-white-700 dark:border-white-600 ${
+              form.errors.find((err: string | string[]) => err.includes('Role')) ? 'border-red-500' : ''
+            }`}
             aria-label="Select role"
           >
             {['Admin', 'Editor', 'Viewer', 'Custom'].map((r) => (
@@ -102,6 +138,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose }) => {
               </option>
             ))}
           </select>
+          {form.errors.find((err: string | string[]) => err.includes('Role')) && (
+            <p className="absolute text-red-500 text-sm mt-1">Please select a role</p>
+          )}
         </div>
         {form.role === 'Custom' && (
           <div className="mb-4">
@@ -145,20 +184,13 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose }) => {
             </table>
           </div>
         )}
-        {form.errors.length > 0 && (
-          <div className="mb-4 text-red-500">
-            {form.errors.map((err, i) => (
-              <p key={i}>{err}</p>
-            ))}
-          </div>
-        )}
         <div className="flex justify-end space-x-4">
           <button
             onClick={() => {
               dispatch(resetAddUserForm());
               onClose();
             }}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 bg-white-500 text-white rounded hover:bg-white-600 transition-colors"
             aria-label="Cancel"
           >
             Cancel

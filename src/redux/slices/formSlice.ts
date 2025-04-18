@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AddUserFormState, RoleAssignmentFormState } from '../../types/form';
-import { validatePermissions, validatePassword, checkEmailUniqueness } from '../../utils/validation';
+import { validatePermissions, validatePassword, checkEmailUniqueness, validateEmail } from '../../utils/validation';
 import { User } from '../../types';
 
 const initialPermissions: Record<'Dashboard' | 'Reports' | 'Settings', Record<'Read' | 'Write' | 'Delete' | 'Share', boolean>> = {
@@ -76,15 +76,29 @@ const formSlice = createSlice({
     },
     validateAddUserForm: (state, action: PayloadAction<User[]>) => {
       const users = action.payload;
-      const emailErrors = checkEmailUniqueness(state.addUser.email, users)
-        ? []
-        : ['Email already exists'];
+    
+      // First, validate email format
+      const emailFormatErrors = validateEmail(state.addUser.email);
+    
+      // If email format is valid, check for uniqueness
+      const emailUniquenessErrors =
+        emailFormatErrors.length === 0 && !checkEmailUniqueness(state.addUser.email, users)
+          ? ['Email already exists']
+          : [];
+    
       const passwordErrors = validatePassword(state.addUser.password);
+    
       const permissionErrors =
         state.addUser.role === 'Custom' && state.addUser.errors.length > 0
           ? ['Invalid permissions']
           : [];
-      state.addUser.errors = [...emailErrors, ...passwordErrors, ...permissionErrors];
+    
+      state.addUser.errors = [
+        ...emailFormatErrors,
+        ...emailUniquenessErrors,
+        ...passwordErrors,
+        ...permissionErrors,
+      ];
     },
     resetAddUserForm: (state) => {
       state.addUser = initialAddUserState;

@@ -34,7 +34,7 @@ const AdminPanel: React.FC = () => {
       </div>
       <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       {snackbar && (
-        <div className="fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded shadow flex items-center space-x-4">
+        <div className="fixed bottom-4 right-4 bg-white-800 text-white p-4 rounded shadow flex items-center space-x-4">
           <span>{snackbar.message}</span>
           {snackbar.undo && (
             <button
