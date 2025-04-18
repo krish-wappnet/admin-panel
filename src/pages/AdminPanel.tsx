@@ -3,9 +3,10 @@ import UsersList from '../components/UsersList/UsersList';
 import RoleAssignment from '../components/RoleAssignment/RoleAssignment';
 import AddUserModal from '../components/AddUserModal/AddUserModal';
 import AuditLog from '../components/AuditLog/AuditLog';
-import DarkModeToggle from '../components/DarkModeToggle/DarkModeToggle';
+// import DarkModeToggle from '../components/DarkModeToggle/DarkModeToggle';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { setAddUserModalOpen } from '../redux/slices/uiSlice';
+import { AiOutlineUserAdd } from 'react-icons/ai';
 
 const AdminPanel: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -18,13 +19,19 @@ const AdminPanel: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Admin Panel</h1>
           <div className="flex items-center space-x-4">
-            <button
+            {/* <button
               onClick={() => dispatch(setAddUserModalOpen(true))}
               className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium shadow"
             >
               Add User
-            </button>
-            <DarkModeToggle />
+            </button> */}
+            <div className="flex items-center space-x-4">
+          <AiOutlineUserAdd
+            className="w-10 h-10 p-2 text-black bg-white-500 rounded-full cursor-pointer hover:bg-gray-200 transition-colors"
+            onClick={() => dispatch(setAddUserModalOpen(true))}
+          />
+          {/* <DarkModeToggle  /> */}
+        </div>
           </div>
         </div>
 

@@ -11,9 +11,9 @@ const UsersList: React.FC = () => {
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<keyof User>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const usersPerPage = 10;
+  const usersPerPage = 5;
 
-  // Log to debug re-rendering
+
   useEffect(() => {
     console.log('UsersList re-rendered with users:', users);
   }, [users]);

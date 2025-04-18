@@ -92,12 +92,13 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose }) => {
             }`}
             aria-label="User email"
           />
-          {form.errors.find((err: string | string[]) => err.includes('Email')) && (
-            <p className="absolute text-red-500 text-sm mt-1">Invalid email format</p>
-          )}
-          {form.errors.find((err: string | string[]) => err.includes('Email already exists')) && (
-            <p className="absolute text-red-500 text-sm mt-1">Email already exists</p>
-          )}
+          {form.errors
+          .filter((err: string) => err.includes('Email'))
+          .map((err: string, index: number) => (
+            <p key={index} className="text-red-500 text-sm">
+              {err}
+            </p>
+          ))}
         </div>
         <div className="mb-4 relative">
           <label className="block mb-1 mt-5">Password</label>
@@ -190,7 +191,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose }) => {
               dispatch(resetAddUserForm());
               onClose();
             }}
-            className="px-4 py-2 bg-white-500 text-white rounded hover:bg-white-600 transition-colors"
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500 transition-colors"
             aria-label="Cancel"
           >
             Cancel

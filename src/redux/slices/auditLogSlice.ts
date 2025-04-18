@@ -10,7 +10,7 @@ const auditLogSlice = createSlice({
   reducers: {
     addLog: (state, action: PayloadAction<AuditLogEntry>) => {
       state.unshift(action.payload);
-      state.splice(10); // Keep only last 10 logs per user
+      state.splice(10); 
       saveToLocalStorage('auditLogs', state);
     },
   },
