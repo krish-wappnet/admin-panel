@@ -54,7 +54,7 @@ const UsersList: React.FC = () => {
   };
 
   return (
-    <div className="w-1/3 p-4 bg-white dark:bg-white-800 shadow rounded">
+    <div className="h-full p-4 bg-white dark:bg-white-900 shadow rounded-xl overflow-auto">
       <h2 className="text-xl font-bold mb-4">Users</h2>
       <Input
         type="text"
@@ -63,14 +63,14 @@ const UsersList: React.FC = () => {
         onChange={setSearch}
         aria-label="Search users"
       />
-      <table className="w-full border-collapse">
+      <table className="min-w-full table-fixed border-collapse">
         <thead>
           <tr>
             {(['name', 'email', 'role'] as const).map((key) => (
               <th
                 key={key}
                 onClick={() => handleSort(key)}
-                className="p-2 text-left cursor-pointer hover:bg-white dark:hover:bg-gray-700"
+                className="p-2 text-left cursor-pointer hover:bg-white dark:hover:bg-gray-200"
                 aria-sort={
                   sortBy === key
                     ? sortOrder === 'asc'

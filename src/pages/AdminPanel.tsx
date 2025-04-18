@@ -9,39 +9,55 @@ import { setAddUserModalOpen } from '../redux/slices/uiSlice';
 
 const AdminPanel: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { snackbar, darkMode, isAddUserModalOpen } = useAppSelector((state) => state.ui);
+  const { snackbar, isAddUserModalOpen } = useAppSelector((state) => state.ui);
 
   return (
-    <div className={`container mx-auto p-4 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">RBAC Admin Panel</h1>
-        <div className="flex space-x-4">
-          <button
-            onClick={() => dispatch(setAddUserModalOpen(true))} // Open the modal
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-            aria-label="Add new user"
-          >
-            Add User
-          </button>
-          <DarkModeToggle />
+    <div className="min-h-screen bg-gray-100 text-black">
+      <div className="container mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Admin Panel</h1>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => dispatch(setAddUserModalOpen(true))}
+              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium shadow"
+            >
+              Add User
+            </button>
+            <DarkModeToggle />
+          </div>
+        </div>
+
+        {/* Grid Layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 min-h-[700px]">
+          {/* Users List */}
+          <div className="xl:col-span-5 bg-white p-6 rounded-xl shadow overflow-hidden">
+            <UsersList />
+          </div>
+
+          {/* Right Panel: RoleAssignment + AuditLog */}
+          <div className="xl:col-span-7 flex flex-col space-y-6">
+            <div className="flex-1 bg-white p-6 rounded-xl shadow overflow-auto">
+              <RoleAssignment />
+            </div>
+            <div className="flex-1 bg-white p-6 rounded-xl shadow overflow-auto">
+              <AuditLog />
+            </div>
+          </div>
         </div>
       </div>
-      <div className="flex space-x-4">
-        <UsersList />
-        <div className="w-2/3">
-          <RoleAssignment />
-          <AuditLog />
-        </div>
-      </div>
+
+      {/* Modal */}
       <AddUserModal isOpen={isAddUserModalOpen} onClose={() => dispatch(setAddUserModalOpen(false))} />
+
+      {/* Snackbar */}
       {snackbar && (
-        <div className="fixed bottom-4 right-4 bg-white-800 text-white p-4 rounded shadow flex items-center space-x-4">
+        <div className="fixed bottom-6 right-6 bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center space-x-4 z-50">
           <span>{snackbar.message}</span>
           {snackbar.undo && (
             <button
               onClick={snackbar.undo}
-              className="px-2 py-1 bg-red-500 text-white rounded"
-              aria-label="Undo action"
+              className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"
             >
               Undo
             </button>
