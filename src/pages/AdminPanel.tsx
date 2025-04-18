@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import UsersList from '../components/UsersList/UsersList';
 import RoleAssignment from '../components/RoleAssignment/RoleAssignment';
 import AddUserModal from '../components/AddUserModal/AddUserModal';
 import AuditLog from '../components/AuditLog/AuditLog';
 import DarkModeToggle from '../components/DarkModeToggle/DarkModeToggle';
-import { useAppSelector } from '../redux/hooks';
+import { useAppSelector, useAppDispatch } from '../redux/hooks';
+import { setAddUserModalOpen } from '../redux/slices/uiSlice';
 
 const AdminPanel: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { snackbar } = useAppSelector((state) => state.ui);
+  const dispatch = useAppDispatch();
+  const { snackbar, darkMode, isAddUserModalOpen } = useAppSelector((state) => state.ui);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className={`container mx-auto p-4 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">RBAC Admin Panel</h1>
         <div className="flex space-x-4">
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => dispatch(setAddUserModalOpen(true))} // Open the modal
             className="px-4 py-2 bg-blue-500 text-white rounded"
             aria-label="Add new user"
           >
@@ -32,7 +33,7 @@ const AdminPanel: React.FC = () => {
           <AuditLog />
         </div>
       </div>
-      <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddUserModal isOpen={isAddUserModalOpen} onClose={() => dispatch(setAddUserModalOpen(false))} />
       {snackbar && (
         <div className="fixed bottom-4 right-4 bg-white-800 text-white p-4 rounded shadow flex items-center space-x-4">
           <span>{snackbar.message}</span>

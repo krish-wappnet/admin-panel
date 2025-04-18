@@ -1,13 +1,16 @@
 
 import { Provider } from 'react-redux'
-import { store } from './redux/store'
+import { persistor, store } from './redux/store'
 import AdminPanel from './pages/AdminPanel'
+import { PersistGate } from 'redux-persist/integration/react'
 
 function App() {
 
   return (
     <Provider store={store}>
-      <AdminPanel />
+      <PersistGate loading={null} persistor={persistor}>
+        <AdminPanel />
+      </PersistGate>
     </Provider>
   )
 }

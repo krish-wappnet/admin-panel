@@ -3,11 +3,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface UIState {
   darkMode: boolean;
   snackbar: { message: string; undo?: () => void } | null;
+  isAddUserModalOpen: boolean; // Add the modal state here
 }
 
 const initialState: UIState = {
   darkMode: false,
   snackbar: null,
+  isAddUserModalOpen: false, // Set initial state of the modal to closed
 };
 
 const uiSlice = createSlice({
@@ -23,8 +25,11 @@ const uiSlice = createSlice({
     hideSnackbar: (state) => {
       state.snackbar = null;
     },
+    setAddUserModalOpen: (state, action: PayloadAction<boolean>) => {
+      state.isAddUserModalOpen = action.payload; // Toggle modal open state
+    },
   },
 });
 
-export const { toggleDarkMode, showSnackbar, hideSnackbar } = uiSlice.actions;
+export const { toggleDarkMode, showSnackbar, hideSnackbar, setAddUserModalOpen } = uiSlice.actions;
 export default uiSlice.reducer;
